@@ -1204,7 +1204,7 @@ class _Strategy:
             f"Backtest took {backtesting_run_time} for a speed of {backtesting_run_time / backtesting_length:,.3f}"
         )
 
-        return result[name], strategy
+        return result[name], strategy, backtesting_broker._trade_event_log_df
 
     def write_backtest_settings(self, settings_file):
         """
@@ -1473,7 +1473,7 @@ class _Strategy:
         >>>     benchmark_asset=benchmark_asset,
         >>> )
         """
-        results, strategy = self.run_backtest(
+        results, strategy, trades_df = self.run_backtest(
             datasource_class=datasource_class,
             backtesting_start=backtesting_start,
             backtesting_end=backtesting_end,
@@ -1513,4 +1513,4 @@ class _Strategy:
             trader_class=trader_class,
             **kwargs,
         )
-        return results
+        return results, strategy, trades_df

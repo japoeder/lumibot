@@ -4,14 +4,14 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="lumibot",
-    version="3.8.1",
-    author="Robert Grzesik",
-    author_email="rob@lumiwealth.com",
-    description="Backtesting and Trading Library, Made by Lumiwealth",
+    name="lumibot_jpmod",
+    version="0.0.2",
+    author="Jonathan Poeder (orig: Robert Grzesik)",
+    author_email="japoeder@japoeder.com",
+    description="Modded version of Lumiwealth library",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Lumiwealth/lumibot",
+    url="https://github.com/japoeder/lumibot",
     packages=setuptools.find_packages(),
     install_requires=[
         "polygon-api-client>=1.13.3",

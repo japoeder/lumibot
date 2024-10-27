@@ -19,3 +19,5 @@ select = [
   "I",  # isort
   #  "D",   # pydocstyle
 ]
+
+name = "lumibot_jpmod"
