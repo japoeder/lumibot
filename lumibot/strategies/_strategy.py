@@ -1004,6 +1004,29 @@ class _Strategy:
         >>> )
         """
 
+
+        def time_difference(start_time, end_time, timestep='seconds'):
+            # Ensure start_time and end_time are datetime objects
+            if isinstance(start_time, str):
+                start_time = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+            if isinstance(end_time, str):
+                end_time = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+            
+            # Calculate the difference
+            delta = end_time - start_time
+            
+            # Convert the difference to the desired timestep
+            if timestep == 'seconds':
+                return delta.total_seconds()
+            elif timestep == 'minutes':
+                return delta.total_seconds() / 60
+            elif timestep == 'hours':
+                return delta.total_seconds() / 3600
+            elif timestep == 'days':
+                return delta.days
+            else:
+                raise ValueError("Unsupported timestep. Use 'seconds', 'minutes', 'hours', or 'days'.")
+        
         if name is None:
             name = self.__name__
 
@@ -1204,7 +1227,23 @@ class _Strategy:
             f"Backtest took {backtesting_run_time} for a speed of {backtesting_run_time / backtesting_length:,.3f}"
         )
 
-        return result[name], strategy, backtesting_broker._trade_event_log_df
+        timestep = "minute"
+        diff_ts = "minutes"
+        # If the strategy sleeptime is in days then use daily data, eg. "1D"
+        if "D" in str(self.sleeptime):
+            timestep = "day"
+            diff_ts = "days"
+
+        
+        length = int(time_difference(backtesting_start, backtesting_end, diff_ts))
+        bars = backtesting_broker.data_source.get_historical_prices(
+            benchmark_asset,
+            length=length,
+            timestep=timestep,
+        )
+        df = bars.df
+
+        return result[name], strategy, backtesting_broker._trade_event_log_df, df
 
     def write_backtest_settings(self, settings_file):
         """
@@ -1473,7 +1512,7 @@ class _Strategy:
         >>>     benchmark_asset=benchmark_asset,
         >>> )
         """
-        results, strategy, trades_df = self.run_backtest(
+        results, strategy, trades_df, historical_pricing = self.run_backtest(
             datasource_class=datasource_class,
             backtesting_start=backtesting_start,
             backtesting_end=backtesting_end,
@@ -1513,4 +1552,4 @@ class _Strategy:
             trader_class=trader_class,
             **kwargs,
         )
-        return results, strategy, trades_df
+        return results, strategy, trades_df, historical_pricing
