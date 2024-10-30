@@ -153,7 +153,7 @@ class Trader:
                 base_filename=base_filename,
             )
 
-        return result
+        return result, self._strategies[0], self._strategies[0].broker._trade_event_log_df
 
     # Async version of run_all
     def run_all_async(self):
